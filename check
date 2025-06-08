@@ -1,0 +1,126 @@
+[
+{
+  "model": "courses.subject",
+  "pk": 1,
+  "fields": {
+    "title": "Mathematics",
+    "slug": "mathematics"
+  }
+},
+{
+  "model": "courses.subject",
+  "pk": 2,
+  "fields": {
+    "title": "Music",
+    "slug": "music"
+  }
+},
+{
+  "model": "courses.subject",
+  "pk": 3,
+  "fields": {
+    "title": "Physics",
+    "slug": "physics"
+  }
+},
+{
+  "model": "courses.subject",
+  "pk": 4,
+  "fields": {
+    "title": "Programming",
+    "slug": "programming"
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 1,
+  "fields": {
+    "owner": 1,
+    "subject": 1,
+    "title": "Mathematics 101",
+    "slug": "mathematics-101",
+    "overview": "",
+    "created": "2025-06-08T21:15:07.239Z",
+    "order": 0
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 2,
+  "fields": {
+    "owner": 1,
+    "subject": 2,
+    "title": "Music 101",
+    "slug": "music-101",
+    "overview": "",
+    "created": "2025-06-08T21:15:07.240Z",
+    "order": 0
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 3,
+  "fields": {
+    "owner": 1,
+    "subject": 3,
+    "title": "Physics 101",
+    "slug": "physics-101",
+    "overview": "",
+    "created": "2025-06-08T21:15:07.241Z",
+    "order": 0
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 4,
+  "fields": {
+    "owner": 1,
+    "subject": 4,
+    "title": "Programming 101",
+    "slug": "programming-101",
+    "overview": "",
+    "created": "2025-06-08T21:15:07.241Z",
+    "order": 0
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 1,
+  "fields": {
+    "course": 1,
+    "title": "Welcome",
+    "description": "Introduction to Mathematics",
+    "order": 0
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 2,
+  "fields": {
+    "course": 2,
+    "title": "Welcome",
+    "description": "Introduction to Music",
+    "order": 0
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 3,
+  "fields": {
+    "course": 3,
+    "title": "Welcome",
+    "description": "Introduction to Physics",
+    "order": 0
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 4,
+  "fields": {
+    "course": 4,
+    "title": "Welcome",
+    "description": "Introduction to Programming",
+    "order": 0
+  }
+}
+]
