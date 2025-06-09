@@ -2,14 +2,56 @@ from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView
-from .models import Course, Module, Content
+from .models import Course, Module, Content, Subject
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic.base import TemplateResponseMixin, View
 from django.apps import apps
 from django.forms.models import modelform_factory
 from .forms import ModuleFormSet
+from django.db.models import Count
+from django.views.generic.detail import DetailView
 
+class CourseDetailView(DetailView):
+    template_name = 'courses/course/detail.html'
+    model = Course
+    context_object_name = 'course'
+
+    def get_queryset(self):
+        return Course.objects.select_related('subject')
+
+    def get_object(self):
+        subject_slug = self.kwargs['subject']
+        course_slug = self.kwargs['slug']
+        return get_object_or_404(
+            self.get_queryset(),
+            subject__slug=subject_slug,
+            slug=course_slug
+        )
+
+  
+class CourseListView(TemplateResponseMixin, View):
+    template_name = 'courses/course/list.html'
+    model = Course
+    def get_permission_required(self):
+        return []  # ✅ Disable permission checking
+
+    def get(self, request, subject=None):
+      subjects = Subject.objects.annotate(total_courses=Count('courses'))
+      courses = Course.objects.annotate(total_modules=Count('modules'))
+      if subject:
+        selected_subject = get_object_or_404(Subject, slug=subject)
+        courses = courses.filter(subject=selected_subject)
+      else:
+        selected_subject = None
+        courses = courses.all()
+      return self.render_to_response({
+        'subjects': subjects,
+        'subject': selected_subject,
+        'courses': courses
+        })
+
+    
 class ModuleOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
     def post(self, request):
         for id, order in self.request_json.items():
@@ -106,12 +148,12 @@ class OwnerCourseMixin(OwnerMixin, LoginRequiredMixin, PermissionRequiredMixin):
 class OwnerCourseEditMixin(OwnerCourseMixin, OwnerEditMixin):
     template_name = 'courses/manage/course/form.html'
 
-class OwnerCourseEditMixin(OwnerCourseMixin,OwnerEditMixin):
-    template_name = 'courses/manage/course/form.html'
-
 class ManageCourseListView(OwnerCourseMixin, ListView):
     template_name = 'courses/manage/course/list.html'
     permission_required = 'courses.view_course'
+
+class OwnerCourseEditMixin(OwnerCourseMixin,OwnerEditMixin):
+    template_name = 'courses/manage/course/form.html'
 
 class CourseCreateView(OwnerCourseEditMixin, CreateView):
     permission_required = 'courses.add_course'
@@ -122,14 +164,6 @@ class CourseUpdateView(OwnerCourseEditMixin, UpdateView):
 class CourseDeleteView(OwnerCourseMixin, DeleteView):
     template_name = 'courses/manage/course/delete.html'
     permission_required = 'courses.delete_course'
-
-class CourseListView(OwnerCourseMixin, ListView):
-    template_name = 'courses/manage/course/list.html'
-    context_object_name = 'courses'
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        return qs.filter(owner=self.request.user)
     
 class ModuleContentListView(TemplateResponseMixin, View):
     template_name = 'courses/manage/module/content_list.html'
