@@ -1,5 +1,9 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
+
+
+app_name = 'courses'
+
 urlpatterns = [
     path(
         'mine/',
@@ -21,4 +25,5 @@ urlpatterns = [
         views.CourseDeleteView.as_view(),
         name='course_delete'
     ),
+  
 ]
