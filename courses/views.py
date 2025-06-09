@@ -45,14 +45,27 @@ class CourseListView(TemplateResponseMixin, View):
         return []  # ✅ Disable permission checking
 
     def get(self, request, subject=None):
-      subjects = Subject.objects.annotate(total_courses=Count('courses'))
-      courses = Course.objects.annotate(total_modules=Count('modules'))
+      subject = cache.get('all_subjects')
+      if not subject:
+        subject = Subject.objects.annotate(
+            total_courses=Count('courses')
+        )
+        cache.set('all_subjects', subject)
+
+    
+      all_courses = Course.objects.annotate(total_modules=Count('modules'))
       if subject:
-        selected_subject = get_object_or_404(Subject, slug=subject)
-        courses = courses.filter(subject=selected_subject)
+        subject = get_object_or_404(Subject, slug=subject)
+        key = f'subject_{subject.id}_courses'
+        courses = cache.get(key)
+        if not courses:
+          courses = all_courses.filter(subject=subject)
+          cache.set(key, courses)
       else:
-        selected_subject = None
-        courses = courses.all()
+        courses = cache.get('all_courses')
+        if not courses:
+          courses = all_courses.all()
+          cache.set('all_courses', courses)
       return self.render_to_response({
         'subjects': subjects,
         'subject': selected_subject,
