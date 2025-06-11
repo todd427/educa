@@ -7,7 +7,7 @@ router.register('courses', views.CourseViewSet)
 router.register('subjects', views.SubjectViewSet)
 urlpatterns = [
      path('', include(router.urls)),
-     path('courses/<int:pk>/enroll/', views.CourseDetailView.as_view(), name='course_enroll'),
+     path('courses/<int:pk>/enroll/', views.CourseEnrollView.as_view(), name='course_enroll'),
 ]
 
 
